@@ -118,10 +118,14 @@ document.querySelectorAll('.js-delete-link')
   {
    const productId =  link.dataset.productId;
     removeFromCart(productId);
-    console.log(cart);
+
+
+const container = document.querySelector(`.js-cart-item-container-${productId}`
+
+);
+
+  console.log(container);
+  container.remove();
+    
   });
 });
-
-
-
-
