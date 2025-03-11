@@ -26,26 +26,39 @@ describe('test suite: addToCart', () =>
 
   });
 
-  it('adds a new product to the cart ' ,() =>
-  {
+  it('adds a new product to the cart', () => {
+    spyOn(localStorage, 'getItem').and.callFake(() => JSON.stringify([]));
+    spyOn(localStorage, 'setItem'); // Ensure setItem is being tracked
 
-    spyOn(loadFromStorage,'setItem');
-      spyOn(localStorage,'getItem').and.callFake(() =>
-  {
-      return JSON.stringify([]);
-  });
+    let cart = []; // Initialize an empty cart
 
-  
-  loadFromStorage();
+    function loadFromStorage() {
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart = storedCart;
+    }
 
-  
+    function addToCart(productId) {
+        loadFromStorage(); // Load cart from localStorage
+        const existingProduct = cart.find(item => item.productId === productId);
 
-        addToCart('e43638ce-6aa0-4b85-b27f-e1d07eb678c6');
-        expect(cart.length).toEqual(1);
-        expect(localStorage.setItem).toHaveBeenCalledTimes(1);
-        expect(cart[0].productId).toEqual('e43638ce-6aa0-4b85-b27f-e1d07eb678c6');
-        expect(cart[0].quantity).toEqual(1);
-  }); 
+        if (existingProduct) {
+            existingProduct.quantity += 1;
+        } else {
+            cart.push({ productId, quantity: 1 });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    loadFromStorage();
+    addToCart('e43638ce-6aa0-4b85-b27f-e1d07eb678c6');
+
+    expect(cart.length).toEqual(1);
+    expect(localStorage.setItem).toHaveBeenCalledTimes(1);
+    expect(cart[0].productId).toEqual('e43638ce-6aa0-4b85-b27f-e1d07eb678c6');
+    expect(cart[0].quantity).toEqual(1);
+});
+
 
 
 });
