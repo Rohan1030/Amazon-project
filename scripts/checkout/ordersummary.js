@@ -15,6 +15,7 @@ import { renderPaymentSummary } from './paymentsummary.js';
 
 
 
+
    export function renderOrderSummary()
   {
 
