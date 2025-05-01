@@ -79,7 +79,7 @@ loadProducts(renderproductsGrid);
 
 
 
-          document.querySelector('.js-products-grid').innerHTML = productsHTML;
+       document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
 
 
