@@ -1,25 +1,16 @@
 import {formatCurrency} from '../scripts/utils/money.js';
 
-
-
-export function getProduct(productId)
-{
+export function getProduct(productId) {
   let matchingProduct;
 
-      products.forEach((product) =>
-      {
+  products.forEach((product) => {
+    if (product.id === productId) {
+      matchingProduct = product;
+    }
+  });
 
-          if(product.id=== productId)
-          {
-            matchingProduct = product;
-          }
-
-
-      });
-
-      return matchingProduct;
+  return matchingProduct;
 }
-
 
 class Product {
   id;
@@ -28,190 +19,131 @@ class Product {
   rating;
   priceCents;
 
-
-
-  constructor(productDetails)
-  {
+  constructor(productDetails) {
     this.id = productDetails.id;
     this.image = productDetails.image;
     this.name = productDetails.name;
     this.rating = productDetails.rating;
     this.priceCents = productDetails.priceCents;
-
   }
 
-  getStarsUrl ()
-  {
-  return  `images/ratings/rating-${this.rating.stars*10}.png`
+  getStarsUrl() {
+    return `images/ratings/rating-${this.rating.stars * 10}.png`;
   }
 
-  getPrice()
-  {
-   return ` $${formatCurrency(this.priceCents)}`
+  getPrice() {
+    return `$${formatCurrency(this.priceCents)}`;
   }
 
-  extraInfoHTML() 
-  {
+  extraInfoHTML() {
     return '';
   }
 }
 
-
 class Clothing extends Product {
-
-
   sizeChartLink;
 
-  constructor(productDetails)
-  {
+  constructor(productDetails) {
     super(productDetails);
     this.sizeChartLink = productDetails.sizeChartLink;
-
   }
 
-    extraInfoHTML ()
- {
- // super.extraInfoHTML();
+  extraInfoHTML() {
+    // super.extraInfoHTML();
     return `
-    
-    <a href ="${this.sizeChartLink}" target= "_blank">
-    Size Cart
-    <a/>
+      <a href="${this.sizeChartLink}" target="_blank">
+        Size chart
+      </a>
     `;
- }
-
-
-
+  }
 }
 
 /*
-   const date = new Date();
-   console.log(date);
-   
-   console.log(date.toLocaleTimeString() );
+const date = new Date();
+console.log(date);
+console.log(date.toLocaleTimeString());
 */
 
 /*
+console.log(this);
 
-    console.log(this);
-
-    const object2 = {
-      a: 2,
-      b: this.a
-    };
-
+const object2 = {
+  a: 2,
+  b: this.a
+};
 */
-/*
 
-function logThis()
-{
+/*
+function logThis() {
   console.log(this);
 }
-
 logThis();
-
 logThis.call('hello');
 
-this 
+this
 const object3 = {
-  method: () =>
-  {
+  method: () => {
     console.log(this);
   }
-
 };
-
 object3.method();
-
 */
-
-
 
 export let products = [];
 
-
-
-
-export  function loadProductsFetch()
-
-{
- const promise = fetch('https://supersimplebackend.dev/products').then( (response)=>
-{
- return  response.json();
-}).then( (productsData) =>
-{
-  products = productsData.map((productDetails) =>
-    {
-      if(productDetails.type === 'clothing')
-      {
-            return new Clothing(productDetails);
+export function loadProductsFetch() {
+  const promise = fetch(
+    'https://supersimplebackend.dev/products'
+  ).then((response) => {
+    return response.json();
+  }).then((productsData) => {
+    products = productsData.map((productDetails) => {
+      if (productDetails.type === 'clothing') {
+        return new Clothing(productDetails);
       }
-      return  new Product(productDetails);
+      return new Product(productDetails);
     });
+
     console.log('load products');
+  }).catch((error) => {
+    console.log('Unexpected error. Please try again later.');
+  });
 
-    
-}).catch( (error)=>
-{
-  console.log('unexpected error.Please try again later');
-});
-
-  return promise ; 
+  return promise;
 }
-
-
-
-
-
 /*
-loadProductsFetch().then( ()=>
-{
-    console.log('next step');
+loadProductsFetch().then(() => {
+  console.log('next step');
 });
-
 */
 
+export function loadProducts(fun) {
+  const xhr = new XMLHttpRequest();
 
-
-export function loadProducts(fun)
-{
- const xhr =  new XMLHttpRequest();
-
- xhr.addEventListener('load', ()=>
-{
-   products = JSON.parse( xhr.response).map((productDetails) =>
-    {
-      if(productDetails.type === 'clothing')
-      {
-            return new Clothing(productDetails);
+  xhr.addEventListener('load', () => {
+    products = JSON.parse(xhr.response).map((productDetails) => {
+      if (productDetails.type === 'clothing') {
+        return new Clothing(productDetails);
       }
-      return  new Product(productDetails);
+      return new Product(productDetails);
     });
+
     console.log('load products');
 
     fun();
+  });
 
-});
+  xhr.addEventListener('error', (error) => {
+    console.log('Unexpected error. Please try again later.');
+  });
 
-    xhr.addEventListener('error',(error) =>
-    {
-        console.log('unexpected error.Please try again later');
-    });
-
-
- xhr.open('GET', 'https://supersimplebackend.dev/products');
- xhr.send();
+  xhr.open('GET', 'https://supersimplebackend.dev/products');
+  xhr.send();
 }
-
-
-
-
-
-
 
 /*
 export const products = [
- {
+  {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
     image: "images/products/athletic-cotton-socks-6-pairs.jpg",
     name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
@@ -869,12 +801,10 @@ export const products = [
       "mens"
     ]
   }
-].map((productDetails) =>
-{
-  if(productDetails.type === 'clothing')
-  {
-        return new Clothing(productDetails);
+].map((productDetails) => {
+  if (productDetails.type === 'clothing') {
+    return new Clothing(productDetails);
   }
-  return  new Product(productDetails);
+  return new Product(productDetails);
 });
 */
